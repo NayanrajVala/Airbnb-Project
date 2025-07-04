@@ -1,0 +1,251 @@
+<% try { %>
+<% layout("boilerplate.layout") %>
+<div class="container my-5">
+    <!-- Flash Messages -->
+    <% if(messages.success && messages.success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= messages.success %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+    <% if(messages.err && messages.err.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= messages.err %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <div class="row g-4">
+        <!-- Listing Card -->
+        <div class="col-lg-8">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="<%= list.image?.url || '/placeholder.jpg' %>" class="card-img-top" alt="<%= list.title || 'Listing' %>" style="height: 400px; object-fit: cover;">
+                <div class="card-body p-4">
+                    <p class="text-muted mb-2"><strong>Owner:</strong> <%= list.owner?.username || 'Unknown' %></p>
+                    <h1 class="card-title h4 fw-bold mb-3"><%= list.title || 'No Title' %></h1>
+                    <p class="card-text text-secondary mb-4"><%= list.description || 'No description' %></p>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Country:</strong> <%= list.country || 'N/A' %></p>
+                            <p class="mb-2"><strong>Location:</strong> <%= list.location || 'N/A' %></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Price:</strong> ₹ <%= list.price ? list.price.toLocaleString("en-in") : 'N/A' %></p>
+                        </div>
+                    </div>
+                    <% if(current && list.owner && current._id.equals(list.owner._id)) { %>
+                        <div class="d-flex gap-2">
+                            <a href="/listings/<%= list._id %>/edit" class="btn btn-danger">Edit</a>
+                            <form action="/listings/<%= list._id %>?_method=DELETE" method="POST">
+                                <button type="submit" class="btn btn-dark">Delete</button>
+                            </form>
+                        </div>
+                    <% } %>
+                    <% if(current && list.owner && !current._id.equals(list.owner._id) && typeof list.price === 'number' && list.price > 0) { %>
+                        <% if(session.booked && session.booked[list._id]) { %>
+                            <button class="btn btn-secondary w-100 mt-3" disabled>Booked</button>
+                        <% } else { %>
+                            <button class="btn btn-success w-100 mt-3" 
+                                    id="bookNowBtn" 
+                                    data-listing-id="<%= list._id %>"
+                                    data-amount="<%= list.price.toString() %>"
+                                    data-title="<%= list.title || 'Listing' %>">Book Now</button>
+                        <% } %>
+                    <% } else if(current && list.owner && !current._id.equals(list.owner._id)) { %>
+                        <p class="text-danger">Booking unavailable due to invalid price.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="col-lg-4">
+            <% if(current) { %>
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h2 class="card-title h5 fw-bold mb-3">Leave a Review</h2>
+                        <form action="/listings/<%= list._id %>/reviews" method="POST" novalidate class="needs-validation">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Rating</label>
+                                <fieldset class="starability-slot">
+                                    <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                                    <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                                    <label for="first-rate1" title="Terrible">1 star</label>
+                                    <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                                    <label for="first-rate2" title="Not good">2 stars</label>
+                                    <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                                    <label for="first-rate3" title="Average">3 stars</label>
+                                    <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                                    <label for="first-rate4" title="Very good">4 stars</label>
+                                    <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                                    <label for="first-rate5" title="Amazing">5 stars</label>
+                                </fieldset>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label fw-semibold">Comments</label>
+                                <textarea name="review[Comment]" id="comment" rows="4" class="form-control" required placeholder="Write your review here..."></textarea>
+                                <div class="invalid-feedback">Please add some comments for review.</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+            <% } %>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="card-title h5 fw-bold mb-3">All Reviews</h2>
+                    <% if(list.reviews && list.reviews.length === 0) { %>
+                        <p class="text-muted">No reviews yet. Be the first to leave one!</p>
+                    <% } else if(list.reviews) { %>
+                        <% for(let review of list.reviews) { %>
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h3 class="h6 fw-semibold mb-0"><%= review.owner?.username || 'Anonymous' %></h3>
+                                    <span class="text-muted small">Rating: <%= review.rating || 'N/A' %>/5</span>
+                                </div>
+                                <p class="starability-result" data-rating="<%= review.rating || 0 %>"></p>
+                                <p class="text-secondary small mb-2"><%= review.Comment || 'No comment' %></p>
+                                <% if(current && review.owner && current._id.equals(review.owner._id)) { %>
+                                    <form action="/listings/<%= list._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    console.log('show.listings.ejs - Script loaded');
+    console.log('show.listings.ejs - Listing ID:', '<%= list._id %>');
+    console.log('show.listings.ejs - Price:', '<%= list.price %>');
+    document.getElementById('bookNowBtn')?.addEventListener('click', async function() {
+        const listingId = this.dataset.listingId;
+        const rawAmount = this.dataset.amount;
+        const title = this.dataset.title;
+
+        console.log('bookNowBtn - Clicked, attributes:', { listingId, rawAmount, title });
+        console.log('bookNowBtn - Raw amount:', rawAmount);
+
+        const amount = parseFloat(rawAmount);
+        if (isNaN(amount) || amount <= 0) {
+            console.error('bookNowBtn - Invalid amount:', rawAmount);
+            alert('Invalid listing price. Please contact support.');
+            return;
+        }
+
+        console.log('bookNowBtn - Sending amount to /create-order:', amount);
+        const payload = { amount };
+        console.log('bookNowBtn - Fetch payload:', JSON.stringify(payload));
+
+        try {
+            console.log('bookNowBtn - Fetching /create-order');
+            const response = await fetch(`/listings/${listingId}/create-order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('bookNowBtn - Non-JSON response:', text);
+                throw new Error(`Server returned non-JSON response: ${response.status}`);
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('bookNowBtn - Create order failed:', response.status, errorData);
+                throw new Error(`Server error: ${response.status} - ${errorData.error || 'Unknown error'}`);
+            }
+
+            const order = await response.json();
+            console.log('bookNowBtn - Order created:', order);
+
+            if (order.error) {
+                console.error('bookNowBtn - Razorpay error:', order.error);
+                alert('Failed to create order: ' + order.error);
+                return;
+            }
+
+            const options = {
+                key: 'rzp_test_wUuLGUYwRHwUGc',
+                amount: order.amount,
+                currency: 'INR',
+                name: 'Wanderlust',
+                description: title,
+                order_id: order.id,
+                handler: async function (response) {
+                    console.log('bookNowBtn - Payment response:', response);
+                    console.log('bookNowBtn - Fetching /verify-payment');
+                    const verifyResponse = await fetch(`/listings/${listingId}/verify-payment`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            amount
+                        })
+                    });
+
+                    if (!verifyResponse.ok) {
+                        const errorData = await verifyResponse.json();
+                        console.error('bookNowBtn - Verify payment failed:', verifyResponse.status, errorData);
+                        alert('Payment verification failed!');
+                        return;
+                    }
+
+                    const result = await verifyResponse.json();
+                    console.log('bookNowBtn - Verify payment result:', result);
+                    if (result.success) {
+                        console.log('bookNowBtn - Redirecting to:', `/listings/${listingId}?payment=success`);
+                        window.location.href = `/listings/${listingId}?payment=success`;
+                    } else {
+                        alert('Payment verification failed!');
+                    }
+                },
+                prefill: {
+                    name: '<%= current ? current.username : "" %>',
+                    email: '<%= current ? current.email : "" %>'
+                },
+                theme: {
+                    color: '#198754'
+                }
+            };
+
+            console.log('bookNowBtn - Opening Razorpay:', options);
+            const rzp = new Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.error('bookNowBtn - Error:', error.message);
+            alert('Something went wrong! Please try again.');
+        }
+    });
+</script>
+<% } catch (e) { %>
+    <div class="container my-5">
+        <div class="alert alert-danger">
+            <h4>Template Error</h4>
+            <p><%= e.message %></p>
+        </div>
+    </div>
+    <script>
+        console.error('show.listings.ejs - Template error:', '<%= e.message %>');
+    </script>
+<% } %>

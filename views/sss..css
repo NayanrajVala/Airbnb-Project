@@ -1,0 +1,78 @@
+/* Ensure the body takes up the full viewport height */
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Hide scrollbars */
+}
+
+/* Container to hold the background image */
+.background-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* Hide overflow */
+}
+
+/* Animated background image */
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('views/mm.jpeg'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    border: 10px solid transparent; /* Transparent border for animation */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Initial shadow */
+    animation: zoom 20s infinite alternate, borderAnimation 5s infinite, shadowAnimation 5s infinite; /* Multiple animations */
+}
+
+/* Keyframes for the zoom animation */
+@keyframes zoom {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+/* Keyframes for border color animation */
+@keyframes borderAnimation {
+    0% {
+        border-color: rgba(255, 0, 0, 0.5); /* Red */
+    }
+    25% {
+        border-color: rgba(0, 255, 0, 0.5); /* Green */
+    }
+    50% {
+        border-color: rgba(0, 0, 255, 0.5); /* Blue */
+    }
+    75% {
+        border-color: rgba(255, 255, 0, 0.5); /* Yellow */
+    }
+    100% {
+        border-color: rgba(255, 0, 0, 0.5); /* Red */
+    }
+}
+
+/* Keyframes for shadow color animation */
+@keyframes shadowAnimation {
+    0% {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Default shadow */
+    }
+    25% {
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); /* Red shadow */
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(0, 255, 0, 0.8); /* Green shadow */
+    }
+    75% {
+        box-shadow: 0 0 30px rgba(0, 0, 255, 0.8); /* Blue shadow */
+    }
+    100% {
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); /* Red shadow */
+    }
+}

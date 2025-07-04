@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Border and Shadow</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0; /* Light background to highlight the animated box */
+        }
+
+        .animated-box {
+            position: relative;
+            width: 300px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* White background with transparency */
+            border: 5px solid rgba(0, 128, 0, 0.6); /* Green border with transparency */
+            box-shadow: 0 0 10px rgba(0, 128, 0, 0.5); /* Green shadow with transparency */
+            border-radius: 10px;
+            text-align: center;
+            animation: borderAnimation 3s infinite, shadowAnimation 5s infinite;
+        }
+
+        @keyframes borderAnimation {
+            0% {
+                border-color: rgba(0, 128, 0, 0.6);
+                transform: scale(1);
+            }
+            50% {
+                border-color: rgba(0, 128, 0, 1);
+                transform: scale(1.05);
+            }
+            100% {
+                border-color: rgba(0, 128, 0, 0.6);
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shadowAnimation {
+            0% {
+                box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(0, 128, 0, 0.7);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(0, 128, 0, 0.5);
+            }
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        p {
+            margin: 0;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-box">
+        <h1>Animated Border and Shadow</h1>
+        <p>Enjoy the smooth animation effects.</p>
+    </div>
+</body>
+</html>

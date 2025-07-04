@@ -1,0 +1,49 @@
+<style>
+  .btn-Search{
+    background-color: rgba(255, 0, 0, 0.821);
+    color: white;
+    border-radius:25px ;
+    padding: 0 1rem 0 1rem;
+  }
+  .btn-Search:hover{
+    background-color: rgba(255, 0, 0, 0.76);
+    color: white;
+  }
+  .btn-Search i{
+    display: inline;
+    margin-right: 0.5rem;
+  }
+  .search{
+    border-radius: 25px;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+    font-size:1rem
+  }
+</style>
+<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup" style="display: flex;justify-content: space-between;">
+      <div class="navbar-nav">
+        
+        <a class="nav-link " href="/listings">Explore</a>
+      </div>
+      <div class="navbar-nav ml-4">
+        <form class="d-flex">
+          <input class="form-control me-2 search" type="search" placeholder="Search destinations" aria-label="Search">
+          <button class="btn btn-Search" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
+        </form>
+      </div>
+      <div class="navbar-nav">
+        <a class="nav-link " href="/listings/new">Airnb your home</a>
+        <% if(!current){ %>
+        <a class="nav-link " aria-current="page" href="/signup" ><b>Signup</b></a>
+        <a class="nav-link " href="/login"><b>Log in</b></a><% } %>
+        <% if(current){ %>
+        <a class="nav-link " href="/logout"><b>Log out</b></a><% } %>
+      </div>
+    </div>
+  </div>
+</nav>
